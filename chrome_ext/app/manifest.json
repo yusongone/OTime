@@ -1,0 +1,21 @@
+{
+  "manifest_version": 2,
+
+  "name": "OTime",
+  "description": "一个时间管理插件",
+  "version": "1.0.0",
+
+  "browser_action": {
+    "default_icon": "./image/logo_128.png",
+    "default_popup": "./html/popup.html"
+  },
+	"icons": { 
+		"16": "./image/logo_16.png",
+		"48": "./image/logo_48.png",
+		"128": "./image/logo_128.png"
+	},
+  "permissions": [
+    "activeTab",
+    "https://www.makejs.com/"
+  ]
+}
