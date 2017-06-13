@@ -1,4 +1,5 @@
 import React,{Children} from "react";
+import PropTypes from 'prop-types';
 
 class AmazonData{
   constructor(obj){
@@ -59,7 +60,7 @@ export const createData=(obj)=>{
 
 export class ReDot extends React.Component{
   static childContextTypes = {
-    data:React.PropTypes.object
+    data:PropTypes.object
   }
 
   constructor(props, context){
@@ -82,7 +83,7 @@ export class ReDot extends React.Component{
 const getWatchComponent=(Component,originWatchList,mapActionToProps)=>
   class WatchComponent extends React.Component{
     static contextTypes = {
-      data:React.PropTypes.object
+      data:PropTypes.object
     }
 
   componentWillUnmount(){
