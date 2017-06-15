@@ -1,5 +1,5 @@
 module.exports = {
-    devtool: 'inline-source-map',
+    /*devtool: 'inline-source-map',*/
     entry:{
       "popup":"./src/popup/popup.js",
       "background":"./src/background.js"
@@ -17,6 +17,15 @@ module.exports = {
 						loader: 'babel-loader',
 						options: { presets: ['es2015','react','stage-1'] },
 					}]
+        },
+        {
+            test: /\.css$/,
+            use: [
+						{
+                loader: "style-loader" // creates style nodes from JS strings
+   					}, {
+                loader: "css-loader" // translates CSS into CommonJS
+            }]
         },
         {
             test: /\.less$/,
