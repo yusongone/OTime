@@ -22,6 +22,7 @@
     "draft-js": "^0.10.1",
     "draft-js-markdown-shortcuts-plugin": "^0.3.0",
     "draft-js-plugins-editor": "^2.0.0-rc2",
+    "draftjs-md-converter": "^0.1.4",
     "less": "^2.7.2",
     "less-loader": "^4.0.4",
     "prop-types": "^15.5.10",

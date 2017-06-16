@@ -1,5 +1,5 @@
 module.exports = {
-    /*devtool: 'inline-source-map',*/
+    devtool: 'inline-source-map',
     entry:{
       "popup":"./src/popup/popup.js",
       "background":"./src/background.js"
