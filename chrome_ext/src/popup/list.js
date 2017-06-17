@@ -84,11 +84,18 @@ class List extends React.Component{
   constructor(p,c){
     super(p,c);
   }
+
+  textChange=(value)=>{
+    const data={...this.props.data};
+    data.text=value;
+    this.props.onChange(data);
+  }
+
   render(){
     return (
       <div className="sandBox">
         <div className="statusBar" ></div>
-        <MyEditor />
+        <MyEditor onChange={this.textChange}/>
       </div>
     );
   }
@@ -98,12 +105,13 @@ class Lists extends React.Component{
   render(){
     const {showAddBox,TimeList}=this.props;
     let CS=null;
-    if(showAddBox){
-      CS=<List />
-    }
-    const Map=TimeList.map(function(item,index){
-      return <List />
 
+    if(showAddBox){
+      CS=<List onChange={this.props.onChange} data={}/>
+    }
+
+    const Map=TimeList.map(function(item,index){
+      return <List onChange={this.props.onChange} data={item} />
     });
 
      

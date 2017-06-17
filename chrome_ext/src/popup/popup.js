@@ -18,8 +18,16 @@ class T extends React.Component{
     storage.getData();
   }
 
-  onChange=()=>{
+  onChange=(noteData)=>{
+    if(noteData.id){
+      storage.updateNode(nodeData).then(function(){
 
+      });
+    }else{
+      storage.addNode(nodeData).then(function(){
+
+      });
+    }
   }
 
   render(){
@@ -27,7 +35,7 @@ class T extends React.Component{
       <ReDot data={redotData}>
         <div className="container">
           <TopBar />
-          <Lists onChange={} />
+          <Lists onChange={this.onChange} />
         </div>
       </ReDot>
     )
