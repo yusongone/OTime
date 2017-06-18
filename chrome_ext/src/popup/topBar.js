@@ -8,7 +8,7 @@ class _TopBar extends React.Component{
   render(){
     return (
       <div className="topBar">
-        <div className="addTimeBtn" onClick={this.add}> 添加 </div>
+        <div className="addTimeBtn" onClick={this.props.onAdd}> 添加 </div>
         <div className="doneListLink"></div>
       </div>
     )

@@ -1,34 +1,70 @@
 let LocalData;
 let noteListHandlerList=[];
+let localStorage=window.localStorage;
 
 if(!localStorage.Data){
-  localStorage.Data={noteList:[]}
+  localStorage.Data='{"noteList":[]}';
 }
-LocalData=window.localStorage;
+
+LocalData=JSON.parse(localStorage.Data);
 
 function _fireNoteListHandlerUpdate(){
   for(let i in noteListHandlerList){
     let handler=noteListHandlerList[i];
-    handler(localData.nodeList);
+    handler(LocalData.noteList);
   }
 }
 
-export const updateNode=(node,callback)=>{
-  const index=LocalData.noteList.find(function(item,index){
-      if(item.id==node.id){
-        return index;
+
+function _createNoteId(){
+  const length=LocalData.noteList.length;
+  const id=new Date().getTime()+"_"+length;
+  return id;
+}
+
+function _saveLocalToStorage(){
+  localStorage.Data=JSON.stringify(LocalData);
+  _fireNoteListHandlerUpdate();
+}
+
+
+export const getData=()=>{
+  return LocalData.noteList;
+}
+
+export const updateNode=(note,callback)=>{
+  let findNodeIndex;
+  const findNote=LocalData.noteList.find(function(item,index){
+      if(item.id==note.id){
+        findNodeIndex=index;
+        return item;
       }
     });
-  LocalData.noteList[index]=node;
+  if(!note.text){
+    LocalData.noteList.splice(findNodeIndex,1);
+  }else{
+    for(var i in findNote){
+      if(i!="id"&&(note[i]!=undefined)){
+        findNote[i]=note[i]
+      }
+    }
+  }
+
+  _saveLocalToStorage();
+}
+
+
+export const addNode=(node,callback)=>{
+  if(!node.text){return;}
+  node["id"]=_createNoteId();
+  LocalData.noteList.unshift(node);
+  _saveLocalToStorage();
 }
 
 export const onNoteListChange=(handler)=>{
   noteListHandlerList.push(handler);
 }
 
-export const addNode=(node,callback)=>{
- LocalData.noteList.unshift(node);
-}
 
 
 

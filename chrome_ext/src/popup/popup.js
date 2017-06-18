@@ -1,6 +1,6 @@
 import React from "react"
 import ReactDOM from "react-dom"
-import storage from "../tools/storage"
+import {onNoteListChange, getData,addNode, updateNode} from "../tools/storage"
 import "./popup.less"
 import Lists from "./list"
 import TopBar from "./topBar"
@@ -14,28 +14,39 @@ const redotData=createData({
 
 
 class T extends React.Component{
+  constructor(p,c){
+    super(p,c);
+
+    onNoteListChange((nodeList)=>{
+      redotData.update("TimeList",nodeList);
+    });
+  }
+
   componentDidMount(){
-    storage.getData();
+    redotData.update("TimeList",getData());
   }
 
   onChange=(noteData)=>{
     if(noteData.id){
-      storage.updateNode(nodeData).then(function(){
-
-      });
+      updateNode(noteData);
     }else{
-      storage.addNode(nodeData).then(function(){
-
-      });
+      addNode(noteData);
+      redotData.update("showAddBox",false);
     }
+  }
+
+  addList=()=>{
+    redotData.update("showAddBox",true);
   }
 
   render(){
     return (
       <ReDot data={redotData}>
         <div className="container">
-          <TopBar />
-          <Lists onChange={this.onChange} />
+          <TopBar onAdd={this.addList}/>
+          <Lists 
+            onChange={this.onChange} 
+          />
         </div>
       </ReDot>
     )
