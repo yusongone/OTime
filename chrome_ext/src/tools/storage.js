@@ -1,3 +1,6 @@
+//import SQL from "./localSql"
+
+
 let LocalData;
 let noteListHandlerList=[];
 let localStorage=window.localStorage;
@@ -5,7 +8,6 @@ let localStorage=window.localStorage;
 if(!localStorage.Data){
   localStorage.Data='{"noteList":[]}';
 }
-
 LocalData=JSON.parse(localStorage.Data);
 
 function _fireNoteListHandlerUpdate(){
@@ -43,7 +45,8 @@ export const updateNode=(note,callback)=>{
   if(!note.text){
     LocalData.noteList.splice(findNodeIndex,1);
   }else{
-    for(var i in findNote){
+    console.log(note);
+    for(var i in note){
       if(i!="id"&&(note[i]!=undefined)){
         findNote[i]=note[i]
       }

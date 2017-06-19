@@ -1,10 +1,12 @@
 import React from "react"
 import ReactDOM from "react-dom"
 import {onNoteListChange, getData,addNode, updateNode} from "../tools/storage"
-import "./popup.less"
 import Lists from "./list"
 import TopBar from "./topBar"
 import {ReDot,createData} from "../reDot"
+
+import "./popup.less"
+import "input-moment/dist/input-moment.css"
 
 
 const redotData=createData({

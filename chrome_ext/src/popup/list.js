@@ -1,5 +1,7 @@
 import React from "react";
 import {watch} from "../reDot"
+import Datepicker from "../components/datepicker"
+
 
 import { mdToDraftjs, draftjsToMd } from 'draftjs-md-converter';
 import { focus,Editor ,EditorState,convertToRaw,createWithContent,convertFromRaw,ContentState} from 'draft-js';
@@ -58,7 +60,6 @@ class MyEditor extends React.Component{
     const text=contentState.getPlainText();
     const md=mdToDraftjs(text);
     let b=convertFromRaw(md);
-    console.log(text.length);
 
     this.setState({
       editorState:EditorState.createWithContent(b),
@@ -80,7 +81,10 @@ class MyEditor extends React.Component{
   }
   
   render(){
-    const className=this.state.readOnly?"editorStatus":"editorStatus readOnly";
+    const editorIcon=this.state.readOnly?
+    <i className="fa fa-pencil-square-o icon" aria-hidden="true"></i>
+    :<i className="fa fa-floppy-o icon" aria-hidden="true"></i>;
+
     return (
       <div className="summary" >
         <Editor 
@@ -92,7 +96,7 @@ class MyEditor extends React.Component{
           //onBlur={this.toRead}
           onChange={this.onChange} />
           <div className="textLength">{this.state.textLength}</div>
-          <div className={className} onClick={this.changeEditorStatus}></div>
+          <div className="editorStatus" onClick={this.changeEditorStatus}>{editorIcon}</div>
       </div>
     )
   }
@@ -102,7 +106,23 @@ class MyEditor extends React.Component{
     }
   }
 }
+class ClockBar extends React.Component{
 
+  render(){
+    return (
+      <div className="clockBar" onClick={()=>{
+        Datepicker.open((timestamp)=>{
+          this.props.onChange(timestamp)
+        });
+      }}>
+        <i className="fa fa-clock-o icon"></i>
+        <div className="progress" ref={(progressBar)=>{
+          this.progress=progressBar;
+          }}></div>
+      </div>
+    )
+  }
+}
 
 class List extends React.Component{
   constructor(p,c){
@@ -115,10 +135,19 @@ class List extends React.Component{
     this.props.onChange(data);
   }
 
+  clockChange=(value)=>{
+    const data={...this.props.data};
+    data.remindTimer=value;
+    this.props.onChange(data);
+  }
+
   render(){
     return (
       <div className="sandBox">
-        <div className="statusBar" ></div>
+        <div className="statusBar" >
+          <ClockBar onChange={this.clockChange} />
+          <div className="tag"></div>
+        </div>
         <MyEditor 
           onChange={this.textChange} 
           value={this.props.data.text}
@@ -129,6 +158,9 @@ class List extends React.Component{
 }
 
 class Lists extends React.Component{
+  constructor(p,c){
+    super(p,c);
+  }
   render(){
     const {showAddBox,TimeList,onChange}=this.props;
     let CS=null;
