@@ -116,9 +116,12 @@ class ClockBar extends React.Component{
         });
       }}>
         <i className="fa fa-clock-o icon"></i>
-        <div className="progress" ref={(progressBar)=>{
+        <div className="progressBox" ref={(progressBar)=>{
           this.progress=progressBar;
-          }}></div>
+          }}>
+          <div className="progress">
+          </div>
+        </div>
       </div>
     )
   }
