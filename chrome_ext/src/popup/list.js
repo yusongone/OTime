@@ -115,7 +115,6 @@ class ClockBar extends React.Component{
           this.props.onChange(timestamp)
         });
       }}>
-        <i className="fa fa-clock-o icon"></i>
         <div className="progressBox" ref={(progressBar)=>{
           this.progress=progressBar;
           }}>
@@ -147,9 +146,9 @@ class List extends React.Component{
   render(){
     return (
       <div className="sandBox">
+        <div className="tag"></div>
         <div className="statusBar" >
           <ClockBar onChange={this.clockChange} />
-          <div className="tag"></div>
         </div>
         <MyEditor 
           onChange={this.textChange} 

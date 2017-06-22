@@ -4,6 +4,7 @@ import {onNoteListChange, getData,addNode, updateNode} from "../tools/storage"
 import Lists from "./list"
 import TopBar from "./topBar"
 import {ReDot,createData} from "../reDot"
+import CountDown from "../components/countDown/index"
 
 import "./popup.less"
 import "input-moment/dist/input-moment.css"
@@ -45,6 +46,9 @@ class T extends React.Component{
     return (
       <ReDot data={redotData}>
         <div className="container">
+          <CountDown onChange={function(millS){
+            console.log(millS);
+          }} />
           <TopBar onAdd={this.addList}/>
           <Lists 
             onChange={this.onChange} 
