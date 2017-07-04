@@ -1,6 +1,8 @@
 @btn-bg-color:#ddd;
 @border-cololr:#dcdcdc;
 @btn-border-color:@border-cololr;
+@blue-color:#00cdd4;
+*{box-sizing: border-box;}
 body{
     margin:0;
     padding:0;
@@ -27,9 +29,8 @@ body{
 }
 .container{
   background:#acacac;
-  *{box-sizing: border-box;}
     background: #f5f5f5;
-    width: 320px;
+    width: 340px;
     height: 530px;
     padding: 10px;
 
@@ -87,23 +88,24 @@ body{
         position:relative;
         cursor:pointer;
         background:#fff;
+        .remainText{
+          font-size: 12px;
+          width: 380px;
+          margin-right: 0px;
+        }
         .clockBar{
           display: flex;
           padding:7px 10px;
-          width: 300px;
+          width: 280px;
           margin-top:5px;
-          .icon{
-            color: #00628c;
-            width: 22px;
-          }
           .progressBox{
-            height: 4px;
+            height: 8px;
             width: 100%;
             background: #eaeaea;
             margin-top: 5px;
             border-radius: 4px;
             .progress{
-              background: #06b500;
+              background: @blue-color;
               width: 60%;
               height: 100%;
               border-radius: 4px;
@@ -159,9 +161,9 @@ body{
   height: 100%;
   background: #fff;
   z-index: 999;
-  .datepicker{
+  .targetTimeBox{
     display: block;
-    margin:50px auto;
+    margin-top:20px;
   }
 }
 

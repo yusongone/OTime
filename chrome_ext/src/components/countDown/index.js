@@ -153,6 +153,7 @@ export class Time extends React.Component{
       }):"";
   }
   hoursChange=(value)=>{
+    value=Math.max(0,Math.min(23,value));
     this.setState({
       hours:value
     },this.onChange)
@@ -171,11 +172,12 @@ export class Time extends React.Component{
       temp.hours=hours-1;
       temp.minutes=59;
     }
-    if(temp.minutes>60){
+    if(temp.minutes>=60){
       temp.minutes=59;
-    }else if(temp.minutes<0){
+    }else if(temp.minutes<=0){
       temp.minutes=0;
     }
+    console.log(temp);
     this.setState(temp,this.onChange);
   }
   render(){

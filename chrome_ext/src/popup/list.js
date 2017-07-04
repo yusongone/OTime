@@ -107,18 +107,61 @@ class MyEditor extends React.Component{
   }
 }
 class ClockBar extends React.Component{
-
+  constructor(p,c){
+    super(p,c);
+    this.state={
+      createTime:new Date().getTime(),
+      scale:0
+    }
+  }
+  componentWillReceiveProps(newProps){
+    if(newProps.remindTime!=this.props.remindTime){
+      const nowTime=new Date().getTime();
+      this._parseScale(nowTime);
+    }
+  }
+  _parseScale=(nowTime)=>{
+    const {remindTime,resetTime}=this.props;
+    let scale=0;
+    if(nowTime>=remindTime){
+      scale=1;
+    }else if(remindTime&&resetTime){
+      scale=(nowTime-resetTime)/(remindTime-resetTime);
+    }
+    this.setState({
+      scale,
+      createTime:nowTime
+    });
+  }
+  componentDidMount(){
+    setInterval(()=>{
+      this._parseScale(new Date().getTime());
+    },2000);
+  }
   render(){
+    const scale=this.state.scale;
+    const width=scale*100;
+    let r=0,g=0;
+    r=parseInt(scale*255*2);
+    if(scale>=0.5){
+      r=255;
+      g=parseInt((1-scale)*255);
+    }else{
+      g=255;
+    }
+    const bg="rgb("+r+","+g+",0)"
+
     return (
       <div className="clockBar" onClick={()=>{
-        Datepicker.open((timestamp)=>{
-          this.props.onChange(timestamp)
+        Datepicker.open((obj)=>{
+          this.props.onChange(obj.getTime())
         });
       }}>
+        <div className="remainText" >剩余: 1天，23小时，3分钟 </div>
         <div className="progressBox" ref={(progressBar)=>{
           this.progress=progressBar;
           }}>
-          <div className="progress">
+          <div className="progress" style={{width:width+"%",background:bg}}>
           </div>
         </div>
       </div>
@@ -139,16 +182,18 @@ class List extends React.Component{
 
   clockChange=(value)=>{
     const data={...this.props.data};
-    data.remindTimer=value;
+    data.remindTime=value;
+    data.resetTime=new Date().getTime();
     this.props.onChange(data);
   }
 
   render(){
+    const {remindTime,resetTime}=this.props.data;
     return (
       <div className="sandBox">
         <div className="tag"></div>
         <div className="statusBar" >
-          <ClockBar onChange={this.clockChange} />
+          <ClockBar remindTime={remindTime} resetTime={resetTime} onChange={this.clockChange} />
         </div>
         <MyEditor 
           onChange={this.textChange} 

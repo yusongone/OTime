@@ -3,6 +3,9 @@ import ReactDOM from "react-dom"
 import InputMoment from "input-moment"
 import moment from "moment"
 
+import {CountDown} from "../components/countDown/index"
+import {TargetTime} from "../components/targetTime/index"
+
 class _DatePicker extends React.Component{
   constructor(p,c){
     super(p,c);
@@ -43,11 +46,25 @@ export default {
     div.className="datepickerBox"
     document.body.appendChild(div);
 
-    function save(value){
-      saveHander(value.format("x"));
-      div.remove();
-    }
+    const cd=(
+      <TargetTime
 
-    ReactDOM.render(<_DatePicker onSave={save}/>,div);
+        onSave={(item)=>{
+          saveHander(item);
+          div.remove();
+        }}
+
+        onCancel={()=>{
+          div.remove();
+        }}
+       />
+      
+      /*
+      <CountDown onChange={function(obj){
+        console.log(obj);
+      }} />
+      */
+    );
+    ReactDOM.render(cd,div);
   }
 };

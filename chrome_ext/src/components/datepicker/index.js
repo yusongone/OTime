@@ -123,13 +123,17 @@ class TopBar extends React.Component{
   }
 
   render(){
-    const leftClassName = "btn left";
-    const rightClassName = "btn right";
+    const leftClassName = "left";
+    const rightClassName = "right";
     return (
       <div className="datepicker_topBar">
-        <div className={leftClassName} onClick={this.subMonth}></div>
+        <div className={leftClassName} onClick={this.subMonth}>
+            <i className="fa fa-chevron-left" />
+        </div>
         <div className="monthBox" >{this.props.year} | {MonthZHMap[this.props.month]}</div>
-        <div className={rightClassName} onClick={this.addMonth}></div>
+        <div className={rightClassName} onClick={this.addMonth}>
+            <i className="fa fa-chevron-right" />
+        </div>
       </div>
     )
   }
