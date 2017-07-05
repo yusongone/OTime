@@ -1,6 +1,7 @@
 import React from "react";
 import {watch} from "../reDot"
 import Datepicker from "../components/datepicker"
+import {getDayHoursMinute} from "../tools/common"
 
 
 import { mdToDraftjs, draftjsToMd } from 'draftjs-md-converter';
@@ -121,24 +122,39 @@ class ClockBar extends React.Component{
     }
   }
   _parseScale=(nowTime)=>{
-    const {remindTime,resetTime}=this.props;
+    const {remindTime,updateRemindTime}=this.props;
     let scale=0;
     if(nowTime>=remindTime){
       scale=1;
-    }else if(remindTime&&resetTime){
-      scale=(nowTime-resetTime)/(remindTime-resetTime);
+    }else if(remindTime&&updateRemindTime){
+      scale=(nowTime-updateRemindTime)/(remindTime-updateRemindTime);
     }
     this.setState({
       scale,
       createTime:nowTime
     });
   }
+  setInterval=()=>{
+    const {remindTime,updateRemindTime}=this.props;
+    const nowTimestamp=new Date().getTime();
+    if(remindTime&&remindTime>nowTimestamp){
+      this._parseScale(nowTimestamp);
+      this.interval=setInterval(()=>{
+        this._parseScale(new Date().getTime());
+      },5000);
+    }
+  }
   componentDidMount(){
-    setInterval(()=>{
-      this._parseScale(new Date().getTime());
-    },2000);
+    this.setInterval();
+  }
+  componentWillUnmount(){
+    if(this.interval){
+      clearInterval(this.interval);
+    }
   }
   render(){
+    const {remindTime,updateRemindTime}=this.props;
+    const nowTimestamp=new Date().getTime();
     const scale=this.state.scale;
     const width=scale*100;
     let r=0,g=0;
@@ -151,19 +167,31 @@ class ClockBar extends React.Component{
     }
     const bg="rgb("+r+","+g+",0)"
 
+    let timerInfo=<div className="remainText" >提醒</div>;
+    let progressBoxClass="progressBox hide";
+    if(remindTime&&remindTime>nowTimestamp){
+      const DHM=getDayHoursMinute(remindTime-nowTimestamp);
+      timerInfo=<div className="remainText" >剩余： {DHM.text}</div>;
+      progressBoxClass="progressBox";
+    }else if(remindTime&&remindTime<nowTimestamp){
+      const overdueTime=getDayHoursMinute(nowTimestamp-remindTime);
+      timerInfo=<div className="remainText alert" >已经过期:{overdueTime.text}</div>;
+    }
+
     return (
       <div className="clockBar" onClick={()=>{
-        Datepicker.open((obj)=>{
+        Datepicker.open(remindTime?new Date(remindTime):null,(obj)=>{
+          this.setInterval();
           this.props.onChange(obj.getTime())
         });
       }}>
-        <div className="remainText" >剩余: 1天，23小时，3分钟 </div>
-        <div className="progressBox" ref={(progressBar)=>{
+        <div className={progressBoxClass} ref={(progressBar)=>{
           this.progress=progressBar;
           }}>
           <div className="progress" style={{width:width+"%",background:bg}}>
           </div>
         </div>
+        {timerInfo}
       </div>
     )
   }
@@ -177,28 +205,35 @@ class List extends React.Component{
   textChange=(value)=>{
     const data={...this.props.data};
     data.text=value;
-    this.props.onChange(data);
+    data.lastEditTime=new Date().getTime();
+    this.onChange(data);
   }
 
   clockChange=(value)=>{
     const data={...this.props.data};
     data.remindTime=value;
-    data.resetTime=new Date().getTime();
+    data.updateRemindTime=new Date().getTime();
+    this.onChange(data);
+  }
+  onChange=(data)=>{
     this.props.onChange(data);
   }
 
   render(){
-    const {remindTime,resetTime}=this.props.data;
+    const {remindTime,updateRemindTime,lastEditTime}=this.props.data;
+    const date=new Date(lastEditTime);
+    const updateTimer=date.toLocaleDateString()+" "+date.toLocaleTimeString(); 
     return (
       <div className="sandBox">
         <div className="tag"></div>
         <div className="statusBar" >
-          <ClockBar remindTime={remindTime} resetTime={resetTime} onChange={this.clockChange} />
+          <ClockBar remindTime={remindTime} updateRemindTime={updateRemindTime} onChange={this.clockChange} />
         </div>
         <MyEditor 
           onChange={this.textChange} 
           value={this.props.data.text}
           />
+        <div className="updateTime">{updateTimer}</div>  
       </div>
     );
   }
@@ -210,13 +245,44 @@ class Lists extends React.Component{
   }
   render(){
     const {showAddBox,TimeList,onChange}=this.props;
+    const nowTimestamp=new Date().getTime();
     let CS=null;
 
     if(showAddBox){
-      CS=<List onChange={onChange} data={{}}/>
+      CS=<List onChange={(obj)=>{
+          const nowTimestamp=new Date().getTime();
+          if(!obj.createTime){
+            obj.createTime=nowTimestamp;
+          }
+          onChange(obj);
+        }} data={{}}/>
     }
 
-    const Map=TimeList.map(function(item,index){
+    let filterAry;
+    const overdueAry=[],countDownAry=[],lastEditAry=[];
+    TimeList.forEach((item)=>{
+      if(item.remindTime&&item.remindTime>nowTimestamp){
+        countDownAry.push(item);
+      }else if(item.remindTime&&item.remindTime<nowTimestamp){
+        overdueAry.push(item);
+      }else{
+        lastEditAry.push(item);
+      }
+    });
+    overdueAry.sort((a,b)=>{
+      const bool=parseInt(a.remindTime)>parseInt(b.remindTime);
+      return bool;
+    });
+    countDownAry.sort((a,b)=>{
+      const bool=parseInt(a.remindTime||0)>parseInt(b.remindTime||0);
+      return bool;
+    });
+    lastEditAry.sort((a,b)=>{
+      return parseInt(a.lastEditTime)<parseInt(b.lastEditTime);
+    });
+    filterAry=overdueAry.concat(countDownAry).concat(lastEditAry);
+
+    const Map=filterAry.map(function(item,index){
       return <List key={item.id} onChange={onChange} data={item} />
     });
 

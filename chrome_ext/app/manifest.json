@@ -9,6 +9,9 @@
     "default_icon": "./image/logo_128.png",
     "default_popup": "./html/popup.html"
   },
+	"background": {
+		"scripts": ["./lib/background.js"]
+	},
 	"icons": { 
 		"16": "./image/logo_16.png",
 		"48": "./image/logo_48.png",

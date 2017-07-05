@@ -1,22 +1,22 @@
 import React from "react"
 import {Time} from "../countDown/index"
 import Datepicker from "../datepicker/index"
-import {getCleanTime} from "../../tools/common"
+import {getCleanTime,getDayHoursMinute} from "../../tools/common"
 
 import "./style.less"
 
-const today=new Date(new Date().getTime()+5*60*1000);
 export class TargetTime extends React.Component{
   constructor(p,c){
     super(p,c);
+    const today=p.date||this._getNow();
     this.state={
       date:today,
       hours:today.getHours(),
       minutes:today.getMinutes()
     }
   }
-  countDownChange=(obj)=>{
-    console.log(obj);
+  _getNow=()=>{
+    return new Date(new Date().getTime()+5*60*1000);
   }
   timeChange=(timeObj)=>{
     const date=new Date(this.state.date);
@@ -38,21 +38,17 @@ export class TargetTime extends React.Component{
       date
     },this._checkTime)
   }
+  _resetNowTime=()=>{
+    const date=this._getNow();
+    date.setSeconds(0);
+    this.setState({
+      date
+    },this._checkTime)
+  }
   _checkTime=()=>{
     const sub=this.state.date.getTime()-new Date().getTime();
-    const total_minutes=parseInt(sub/(60*1000));
-    const day=parseInt(total_minutes/(24*60));
-    const hours=parseInt(total_minutes%(24*60)/60);
-    const minutes=parseInt(total_minutes%(24*60)%60)+1;
-    console.log(day,hours,minutes);
-    let a="距离现在： ";
-    if(day>0){
-      a+=day+" 天, "+hours+" 小时, "+minutes+" 分钟";
-    }else if(hours>0){
-      a+=hours+" 小时, "+minutes+"分钟";
-    }else if(minutes>0){
-      a+=minutes+" 分钟";
-    }
+    const DHM=getDayHoursMinute(sub);
+    let a="距离现在： "+DHM.text;
     if(sub<1){
       this.setState({
         msg:{
@@ -70,6 +66,9 @@ export class TargetTime extends React.Component{
     }
   }
   save=()=>{
+    if(this.state.msg&&this.state.msg.type=="error"){
+      return;
+    }
     this.props.onSave(this.state.date);
   }
   render(){
@@ -81,13 +80,14 @@ export class TargetTime extends React.Component{
           value={this.state.date}
           onChange={this.dateChange} 
           disableDate={(date)=>{
-            if(date.getTime()<getCleanTime(today)){
+            if(date.getTime()<getCleanTime(new Date())){
               return true;
             }
           }}
 
           />
-          <Time startTime={this.state.date.getTime()} onChange={this.timeChange} />
+          <Time startTime={this.state.date.getTime()} value={this.state.date.getTime()} onChange={this.timeChange} />
+          <div className="setNowBtn" onClick={this._resetNowTime} >5分钟后</div>
           <div className={msgClass}>{this.state.msg?this.state.msg.msg:""}</div>
           <div className="btnBox">
             <div 

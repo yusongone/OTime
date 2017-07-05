@@ -83,6 +83,13 @@ body{
         z-index: 99;
         transform: rotate(135deg);
       }
+      .updateTime{
+        font-size: 12px;
+        position: absolute;
+        bottom: 13px;
+        left: 10px;
+        color: #bbb;
+      }
       .statusBar{
         width: 100%;
         position:relative;
@@ -92,6 +99,10 @@ body{
           font-size: 12px;
           width: 380px;
           margin-right: 0px;
+          color: #999;
+        }
+        .remainText.alert{
+          color:red;
         }
         .clockBar{
           display: flex;
@@ -104,12 +115,16 @@ body{
             background: #eaeaea;
             margin-top: 5px;
             border-radius: 4px;
+            margin-right:15px;
             .progress{
               background: @blue-color;
               width: 60%;
               height: 100%;
               border-radius: 4px;
             }
+          }
+          .progressBox.hide{
+            display:none;
           }
         }
       }

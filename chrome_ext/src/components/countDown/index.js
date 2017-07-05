@@ -144,6 +144,17 @@ export class Time extends React.Component{
       minutes:minMinute
     }
   }
+  componentWillReceiveProps(newProps){
+    if(newProps.value!=undefined&&newProps.value!=this.props.value){
+      const date=new Date(newProps.value);
+      const minHours=date.getHours();
+      let minMinute=date.getMinutes();
+      this.setState({
+        hours:minHours,
+        minutes:minMinute
+      })
+    }
+  }
   onChange=()=>{
       const millS=(this.state.hours*3600+this.state.minutes*60)*1000;
       this.props.onChange?this.props.onChange({
@@ -177,7 +188,6 @@ export class Time extends React.Component{
     }else if(temp.minutes<=0){
       temp.minutes=0;
     }
-    console.log(temp);
     this.setState(temp,this.onChange);
   }
   render(){

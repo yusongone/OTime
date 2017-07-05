@@ -14,6 +14,13 @@ const redotData=createData({
 });
 
 
+ var port = chrome.extension.connect({
+      name: "Sample Communication"
+ });
+ port.onMessage.addListener(function(msg) {
+      console.log("message recieved" + msg);
+ });
+
 class PageProvider extends React.Component{
   constructor(p,c){
     super(p,c);
@@ -32,11 +39,16 @@ class PageProvider extends React.Component{
   }
 
   onChange=(noteData)=>{
+
+
     if(noteData.id){
       updateNode(noteData);
     }else{
       addNode(noteData);
       redotData.update("showAddBox",false);
+    }
+    if(noteData.remindTime&&noteData.status!="done"){
+      port.postMessage({TYPE:"ADD_REMIND_TIME"});
     }
   }
 

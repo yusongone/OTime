@@ -41,14 +41,14 @@ class _DatePicker extends React.Component{
 */
 
 export default {
-  open(saveHander){
+  open(date,saveHander){
     const div=document.createElement("div");
     div.className="datepickerBox"
     document.body.appendChild(div);
 
     const cd=(
       <TargetTime
-
+        date={date}
         onSave={(item)=>{
           saveHander(item);
           div.remove();

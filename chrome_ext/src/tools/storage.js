@@ -45,7 +45,6 @@ export const updateNode=(note,callback)=>{
   if(!note.text){
     LocalData.noteList.splice(findNodeIndex,1);
   }else{
-    console.log(note);
     for(var i in note){
       if(i!="id"&&(note[i]!=undefined)){
         findNote[i]=note[i]
