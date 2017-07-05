@@ -6,7 +6,6 @@ import TopBar from "./topBar"
 import {ReDot,createData,watch} from "../reDot"
 
 import "./popup.less"
-import "input-moment/dist/input-moment.css"
 
 const redotData=createData({
   "TimeList":[],
@@ -29,8 +28,16 @@ class PageProvider extends React.Component{
       date:new Date("2013-5-13")
     }
 
-    onNoteListChange((nodeList)=>{
+    onNoteListChange((note,nodeList)=>{
       redotData.update("TimeList",nodeList);
+      console.log(note);
+      if(note.remindTime&&note.remindTime>new Date().getTime()){
+        console.log("88888888",note,getData());
+        port.postMessage({TYPE:"ADD_REMIND_TIME"});
+      }else{
+        console.log("99999999",note,getData());
+        port.postMessage({TYPE:"CLEAR_REMIND",note:note});
+      }
     });
   }
 
@@ -39,6 +46,7 @@ class PageProvider extends React.Component{
   }
 
   onChange=(noteData)=>{
+    console.log("&&&&&",noteData);
 
 
     if(noteData.id){
@@ -46,9 +54,6 @@ class PageProvider extends React.Component{
     }else{
       addNode(noteData);
       redotData.update("showAddBox",false);
-    }
-    if(noteData.remindTime&&noteData.status!="done"){
-      port.postMessage({TYPE:"ADD_REMIND_TIME"});
     }
   }
 

@@ -1,6 +1,3 @@
-//import SQL from "./localSql"
-
-
 let LocalData;
 let noteListHandlerList=[];
 let localStorage=window.localStorage;
@@ -8,12 +5,13 @@ let localStorage=window.localStorage;
 if(!localStorage.Data){
   localStorage.Data='{"noteList":[]}';
 }
+
 LocalData=JSON.parse(localStorage.Data);
 
-function _fireNoteListHandlerUpdate(){
+function _fireNoteListHandlerUpdate(node){
   for(let i in noteListHandlerList){
     let handler=noteListHandlerList[i];
-    handler(LocalData.noteList);
+    handler(node,LocalData.noteList);
   }
 }
 
@@ -24,14 +22,15 @@ function _createNoteId(){
   return id;
 }
 
-function _saveLocalToStorage(){
+function _saveLocalToStorage(node){
   localStorage.Data=JSON.stringify(LocalData);
-  _fireNoteListHandlerUpdate();
+  _fireNoteListHandlerUpdate(node);
 }
 
 
 export const getData=()=>{
-  return LocalData.noteList;
+  const localData=JSON.parse(localStorage.Data);
+  return localData.noteList;
 }
 
 export const updateNode=(note,callback)=>{
@@ -45,14 +44,13 @@ export const updateNode=(note,callback)=>{
   if(!note.text){
     LocalData.noteList.splice(findNodeIndex,1);
   }else{
-    for(var i in note){
+    for(var i in findNote){
       if(i!="id"&&(note[i]!=undefined)){
         findNote[i]=note[i]
       }
     }
   }
-
-  _saveLocalToStorage();
+  _saveLocalToStorage(note);
 }
 
 
@@ -60,7 +58,7 @@ export const addNode=(node,callback)=>{
   if(!node.text){return;}
   node["id"]=_createNoteId();
   LocalData.noteList.unshift(node);
-  _saveLocalToStorage();
+  _saveLocalToStorage(node);
 }
 
 export const onNoteListChange=(handler)=>{
