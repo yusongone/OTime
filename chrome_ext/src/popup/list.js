@@ -6,6 +6,7 @@ import {getDayHoursMinute} from "../tools/common"
 
 import { mdToDraftjs, draftjsToMd } from 'draftjs-md-converter';
 import { focus,Editor ,EditorState,convertToRaw,createWithContent,convertFromRaw,ContentState} from 'draft-js';
+import ColorPicker from "../components/colorPicker/index"
 
 function findBigestVector(ary){
   let max=0;
@@ -218,14 +219,18 @@ class List extends React.Component{
   onChange=(data)=>{
     this.props.onChange(data);
   }
+  typeChange=(value)=>{
+    const data={...this.props.data};
+    data.noteType=value;
+    this.onChange(data);
+  }
 
   render(){
-    const {remindTime,updateRemindTime,lastEditTime}=this.props.data;
+    const {remindTime,updateRemindTime,lastEditTime,noteType}=this.props.data;
     const date=new Date(lastEditTime);
     const updateTimer=date.toLocaleDateString()+" "+date.toLocaleTimeString(); 
     return (
       <div className="sandBox">
-        <div className="tag"></div>
         <div className="statusBar" >
           <ClockBar remindTime={remindTime} updateRemindTime={updateRemindTime} onChange={this.clockChange} />
         </div>
@@ -234,6 +239,9 @@ class List extends React.Component{
           value={this.props.data.text}
           />
         <div className="updateTime">{updateTimer}</div>  
+        <div className="tag">
+          <ColorPicker onChange={this.typeChange} value={noteType}/>
+        </div>
       </div>
     );
   }

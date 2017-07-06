@@ -4,6 +4,7 @@ import {onNoteListChange, getData,addNode, updateNode} from "../tools/storage"
 import Lists from "./list"
 import TopBar from "./topBar"
 import {ReDot,createData,watch} from "../reDot"
+import ColorPicker from "../components/colorPicker/index"
 
 import "./popup.less"
 
@@ -30,12 +31,9 @@ class PageProvider extends React.Component{
 
     onNoteListChange((note,nodeList)=>{
       redotData.update("TimeList",nodeList);
-      console.log(note);
       if(note.remindTime&&note.remindTime>new Date().getTime()){
-        console.log("88888888",note,getData());
         port.postMessage({TYPE:"ADD_REMIND_TIME"});
       }else{
-        console.log("99999999",note,getData());
         port.postMessage({TYPE:"CLEAR_REMIND",note:note});
       }
     });
@@ -66,7 +64,6 @@ class PageProvider extends React.Component{
     return (
       <ReDot data={redotData}>
         <div className="container">
-
           <TopBar onAdd={this.addList}/>
           <Lists 
             onChange={this.onChange} 
@@ -76,6 +73,9 @@ class PageProvider extends React.Component{
     )
   }
 }
+/*
+        <ColorPicker />
+*/
 
 ReactDOM.render(<PageProvider />,document.getElementById("box"));
 
