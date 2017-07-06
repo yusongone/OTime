@@ -171,7 +171,7 @@ class Picker{
       this.B.show();
       this.C.show();
       this.D.show();
-      this.center.hide();
+      //this.center.hide();
     })
     this.A.target(25,25).animation(A);
     this.B.target(75,25).animation(A);
@@ -195,7 +195,6 @@ export default class _ extends React.Component{
         type
       },()=>{
         this.props.onChange?this.props.onChange(type):"";
-        this.picker.fold();
         if(!this.props.value){
           this.picker.setType(this.state.type);
         }

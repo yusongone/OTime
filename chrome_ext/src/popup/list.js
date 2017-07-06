@@ -172,11 +172,11 @@ class ClockBar extends React.Component{
     let progressBoxClass="progressBox hide";
     if(remindTime&&remindTime>nowTimestamp){
       const DHM=getDayHoursMinute(remindTime-nowTimestamp);
-      timerInfo=<div className="remainText" >剩余： {DHM.text}</div>;
+      timerInfo=<div className="remainText warn" >剩余: {DHM.text} <div> 完成</div></div>;
       progressBoxClass="progressBox";
     }else if(remindTime&&remindTime<nowTimestamp){
       const overdueTime=getDayHoursMinute(nowTimestamp-remindTime);
-      timerInfo=<div className="remainText alert" >已经过期:{overdueTime.text}</div>;
+      timerInfo=<div className="remainText alert" >已经过期: {overdueTime.text} <div> 完成</div></div>;
     }
 
     return (

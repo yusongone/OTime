@@ -44,8 +44,6 @@ class PageProvider extends React.Component{
   }
 
   onChange=(noteData)=>{
-    console.log("&&&&&",noteData);
-
 
     if(noteData.id){
       updateNode(noteData);
