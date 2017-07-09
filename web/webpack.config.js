@@ -2,7 +2,8 @@
 module.exports = {
     devtool: 'inline-source-map',
     entry : {
-      "login":"./src/login.js"
+      "login":"./src/login.js",
+      "register":"./src/register.js"
     },
     output: {
       filename: '[name].js',
@@ -39,7 +40,9 @@ module.exports = {
                 loader: "less-loader" // compiles Less to CSS
             }]
         }]
-    }
+    },
+
+
 };
 /*
 */

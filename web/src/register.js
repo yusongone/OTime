@@ -14,19 +14,27 @@ import {Get,Post} from "./tools/http"
 
 import "./style/login.less"
 
+
 function form(props){
   const { getFieldDecorator } = props.form;
   return (
        <Form onSubmit={props.onSubmit} className="login-form">
         <FormItem>
-          {getFieldDecorator('userName', {
+          {getFieldDecorator('username', {
             rules: [{ required: true, message: 'Username is required!' }],
           })(
             <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="Username" />
           )}
         </FormItem>
         <FormItem>
-          {getFieldDecorator('Pass', {
+          {getFieldDecorator('pass', {
+            rules: [{ required: true, message: 'Password is required!' }],
+          })(
+            <Input prefix={<Icon type="lock" style={{ fontSize: 13 }} />} type="password" placeholder="Password" />
+          )}
+        </FormItem>
+        <FormItem>
+          {getFieldDecorator('rePass', {
             rules: [{ required: true, message: 'Password is required!' }],
           })(
             <Input prefix={<Icon type="lock" style={{ fontSize: 13 }} />} type="password" placeholder="Password" />
@@ -35,7 +43,7 @@ function form(props){
         <FormItem>
           <Checkbox>Remember me</Checkbox>
           <Button type="primary" htmlType="submit" className="login-form-button">
-            Log in
+            Registe
           </Button>
         </FormItem>
       </Form>
@@ -49,9 +57,15 @@ const LoginForm=watch(["username"])(Form.create({
         value:props.username
       },
       pass:{
-        value:props.password
+        value:props.pass
+      },
+      rePass:{
+        value:props.pass
       }
     }
+  },
+  onFieldsChange(props, changedFields) {
+    console.log(changedFields);
   },
   onValuesChange(props, values) {
     const key=Object.keys(values)[0];
@@ -63,12 +77,19 @@ const LoginForm=watch(["username"])(Form.create({
 class LoginPage extends React.Component{
   handleSubmit=(e)=>{
     e.preventDefault();
+
     const data=reDotData.getData();
+    if(data.pass!=data.rePass){
+      alert("两次密码不一致");
+      return;
+    }
     Post({
-      path:"/api/auth/login",
-      data:{}
+      path:"/api/auth/register",
+      data:{
+        username:data.username,
+        password:data.pass
+      }
     });
-    console.log(data);
   }
   onValueChange=(_,values)=>{
     console.log(_,values);
@@ -84,11 +105,12 @@ class LoginPage extends React.Component{
   }
 }
 
+
 const reDotData=createData({
       username:"",
-      password:""
-    });
-
+      pass:"",
+      rePass:""
+});
 
 ReactDOM.render(
   <ReDot 
