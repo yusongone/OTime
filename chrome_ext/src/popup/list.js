@@ -108,7 +108,7 @@ class MyEditor extends React.Component{
     }
   }
 }
-class ClockBar extends React.Component{
+class ActionBar extends React.Component{
   constructor(p,c){
     super(p,c);
     this.state={
@@ -153,6 +153,13 @@ class ClockBar extends React.Component{
       clearInterval(this.interval);
     }
   }
+  openDatepicker=()=>{
+    const {remindTime,updateRemindTime}=this.props;
+    Datepicker.open(remindTime?new Date(remindTime):null,(obj)=>{
+      this.setInterval();
+      this.props.onClockChange(obj.getTime())
+    });
+  }
   render(){
     const {remindTime,updateRemindTime}=this.props;
     const nowTimestamp=new Date().getTime();
@@ -168,23 +175,21 @@ class ClockBar extends React.Component{
     }
     const bg="rgb("+r+","+g+",0)"
 
-    let timerInfo=<div className="remainText" >提醒</div>;
+    let timerInfo=<div className="remainText" onClick={this.openDatepicker} >提醒</div>;
     let progressBoxClass="progressBox hide";
-    if(remindTime&&remindTime>nowTimestamp){
+    if(this.props.createType){
+      timerInfo="";
+    }else if(remindTime&&remindTime>nowTimestamp){
       const DHM=getDayHoursMinute(remindTime-nowTimestamp);
-      timerInfo=<div className="remainText warn" >剩余: {DHM.text} <div> 完成</div></div>;
+      timerInfo=<div className="remainText warn" onClick={this.openDatepicker} >剩余: {DHM.text} </div>;
       progressBoxClass="progressBox";
     }else if(remindTime&&remindTime<nowTimestamp){
       const overdueTime=getDayHoursMinute(nowTimestamp-remindTime);
-      timerInfo=<div className="remainText alert" >已经过期: {overdueTime.text} <div> 完成</div></div>;
+      timerInfo=<div className="remainText alert" onClick={this.openDatepicker} >已经过期: {overdueTime.text} </div>;
     }
 
     return (
       <div className="clockBar" onClick={()=>{
-        Datepicker.open(remindTime?new Date(remindTime):null,(obj)=>{
-          this.setInterval();
-          this.props.onChange(obj.getTime())
-        });
       }}>
         <div className={progressBoxClass} ref={(progressBar)=>{
           this.progress=progressBar;
@@ -193,6 +198,8 @@ class ClockBar extends React.Component{
           </div>
         </div>
         {timerInfo}
+        <div className="doneBtn" onClick={this.props.onDone}> 完成</div>
+        <div className="ArchiveBtn" onClick={this.props.onArchive}> 归档</div>
       </div>
     )
   }
@@ -224,6 +231,17 @@ class List extends React.Component{
     data.noteType=value;
     this.onChange(data);
   }
+  done=(value)=>{
+    const data={...this.props.data};
+    delete data.remindTime;
+    delete data.updateRemindTime;
+    this.onChange(data);
+  }
+  Archive=(value)=>{
+    const data={...this.props.data};
+    data.archive=true;
+    this.onChange(data);
+  }
 
   render(){
     const {remindTime,updateRemindTime,lastEditTime,noteType}=this.props.data;
@@ -232,7 +250,13 @@ class List extends React.Component{
     return (
       <div className="sandBox">
         <div className="statusBar" >
-          <ClockBar remindTime={remindTime} updateRemindTime={updateRemindTime} onChange={this.clockChange} />
+          <ActionBar 
+            remindTime={remindTime} 
+            updateRemindTime={updateRemindTime} 
+            onClockChange={this.clockChange} 
+            onDone={this.done}
+            onArchive={this.Archive}
+            />
         </div>
         <MyEditor 
           onChange={this.textChange} 
@@ -257,7 +281,9 @@ class Lists extends React.Component{
     let CS=null;
 
     if(showAddBox){
-      CS=<List onChange={(obj)=>{
+      CS=<List
+          createType={true}
+          onChange={(obj)=>{
           const nowTimestamp=new Date().getTime();
           if(!obj.createTime){
             obj.createTime=nowTimestamp;

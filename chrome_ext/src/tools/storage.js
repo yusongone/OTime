@@ -49,6 +49,13 @@ export const updateNode=(note,callback)=>{
         findNote[i]=note[i]
       }
     }
+    for(var i in findNote){
+      if(i!="id"&&(findNote[i]!=undefined)){
+        if(note[i]){
+          delete findNote[i];
+        }
+      }
+    }
   }
   _saveLocalToStorage(note);
 }

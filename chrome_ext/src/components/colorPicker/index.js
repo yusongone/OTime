@@ -100,11 +100,9 @@ class Color{
     return this;
   }
   setColor(color){
-    console.log(color);
     this.body.style.background=color;
   }
   animation(Animation){
-    console.log("-----");
     this.an?this.an.stop():"";
     const time=Animation.time;
     const xStep=(this.targetPosition[0]-this.position[0])/time;
@@ -148,7 +146,6 @@ class Picker{
     this.center.setColor(color[type]);
   }
   fold(){
-    console.log("fold");
     const A=new Animation(200);
     A.end(()=>{
       this.A.hide();
@@ -164,7 +161,6 @@ class Picker{
     this.center.target(75,25).animation(A);
   }
   unfold(){
-    console.log("unfold");
     const A=new Animation(100);
     A.start(()=>{
       this.A.show();
