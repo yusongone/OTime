@@ -41,23 +41,19 @@ export const updateNode=(note,callback)=>{
         return item;
       }
     });
-  if(!note.text){
+  if(note.delete){
     LocalData.noteList.splice(findNodeIndex,1);
+  }else if(note.done){
+    delete findNote.remindTime;
+    delete findNote.updateRemindTime;
   }else{
     for(var i in note){
       if(i!="id"&&(note[i]!=undefined)){
         findNote[i]=note[i]
       }
     }
-    for(var i in findNote){
-      if(i!="id"&&(findNote[i]!=undefined)){
-        if(note[i]){
-          delete findNote[i];
-        }
-      }
-    }
   }
-  _saveLocalToStorage(note);
+  _saveLocalToStorage(findNote);
 }
 
 

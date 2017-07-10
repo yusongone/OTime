@@ -7,6 +7,7 @@ import {getDayHoursMinute} from "../tools/common"
 import { mdToDraftjs, draftjsToMd } from 'draftjs-md-converter';
 import { focus,Editor ,EditorState,convertToRaw,createWithContent,convertFromRaw,ContentState} from 'draft-js';
 import ColorPicker from "../components/colorPicker/index"
+import Confirm from "../components/confirm"
 
 function findBigestVector(ary){
   let max=0;
@@ -198,8 +199,9 @@ class ActionBar extends React.Component{
           </div>
         </div>
         {timerInfo}
-        <div className="doneBtn" onClick={this.props.onDone}> 完成</div>
-        <div className="ArchiveBtn" onClick={this.props.onArchive}> 归档</div>
+        {remindTime&&<div className="doneBtn" onClick={this.props.onDone}>完成</div>}
+        <div className="ArchiveBtn" onClick={this.props.onArchive}>归档</div>
+        <div className="delete" onClick={this.props.onDelete}>删除</div>
       </div>
     )
   }
@@ -208,6 +210,9 @@ class ActionBar extends React.Component{
 class List extends React.Component{
   constructor(p,c){
     super(p,c);
+    this.state={
+      showDelete:true
+    }
   }
 
   textChange=(value)=>{
@@ -233,8 +238,7 @@ class List extends React.Component{
   }
   done=(value)=>{
     const data={...this.props.data};
-    delete data.remindTime;
-    delete data.updateRemindTime;
+    data.done=true;
     this.onChange(data);
   }
   Archive=(value)=>{
@@ -242,13 +246,25 @@ class List extends React.Component{
     data.archive=true;
     this.onChange(data);
   }
+  delete=()=>{
+    Confirm.appendTo(this.body)((event)=>{
+      console.log(event);
+      if(event.action==true){
+        const data={...this.props.data};
+        data.delete=true;
+        this.onChange(data);
+      }
+    })
+  }
 
   render(){
     const {remindTime,updateRemindTime,lastEditTime,noteType}=this.props.data;
     const date=new Date(lastEditTime);
     const updateTimer=date.toLocaleDateString()+" "+date.toLocaleTimeString(); 
+
+
     return (
-      <div className="sandBox">
+      <div className="sandBox" ref={(body)=>{this.body=body;}}>
         <div className="statusBar" >
           <ActionBar 
             remindTime={remindTime} 
@@ -256,6 +272,7 @@ class List extends React.Component{
             onClockChange={this.clockChange} 
             onDone={this.done}
             onArchive={this.Archive}
+            onDelete={this.delete}
             />
         </div>
         <MyEditor 
