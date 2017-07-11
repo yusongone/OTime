@@ -73,7 +73,7 @@ export class TargetTime extends React.Component{
   }
   render(){
     const msgClass=this.state.msg?"msg "+ this.state.msg.type:"msg";
-    const btnClass=this.state.msg?"btn "+ this.state.msg.type:"btn";
+    const btnClass=this.state.msg&&this.state.msg.type=="error"?"btn disable":"btn primary";
     return (
       <div className="targetTimeBox">
         <Datepicker 
@@ -95,7 +95,7 @@ export class TargetTime extends React.Component{
               onClick={this.save}
               >确定</div>
             <div 
-              className="btn cancel"
+              className="btn"
               onClick={this.props.onCancel}
               >取消</div>
           </div>

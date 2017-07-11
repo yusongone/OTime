@@ -19,6 +19,15 @@ const MonthZHMap={
   "11":"十一月",
   "12":"十二月"
 }
+const WeekZHMap={
+  "0":"日",
+  "1":"一",
+  "2":"二",
+  "3":"三",
+  "4":"四",
+  "5":"五",
+  "6":"六"
+}
 
 class Month extends React.Component{
   constructor(p,c){
@@ -70,11 +79,11 @@ class Month extends React.Component{
       if(day==0||day==6){ //not work day
         className += " weekEnd"
       }
-      if(!item.inMonth){
-        className += " outMonth"
-      }
       if(isDisable){
         className += " disable"
+      }
+      if(!item.inMonth){
+        className += " outMonth"
       }
 
       const sameYear=(value.getFullYear()==dateObj.getFullYear());
@@ -139,6 +148,15 @@ class TopBar extends React.Component{
   }
 }
 
+function getWeek(props){
+  let week=[];
+  for(var i in WeekZHMap){
+    let temp=WeekZHMap[i];
+    week.push(<div>{temp}</div>);
+  }
+  return <div className="weekHeader">{week}</div>;
+}
+
 class DatePicer extends React.Component{
   constructor(p,c){
     super(p,c);
@@ -182,14 +200,15 @@ class DatePicer extends React.Component{
       });
     }
   }
-
   render(){
+    const Week=getWeek();
     return (
       <div className="datepicker">
         <TopBar 
           year={this.state.year} 
           month={this.state.month} 
           onChange={this.changeMonth}/>
+        {Week}  
         <Month 
           disableDate={this.props.disableDate}
           inputValue={this.props.value}
