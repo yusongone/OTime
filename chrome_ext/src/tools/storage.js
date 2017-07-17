@@ -1,3 +1,4 @@
+import {ObjectCompare} from "./common";
 let LocalData;
 let noteListHandlerList=[];
 let localStorage=window.localStorage;
@@ -14,7 +15,6 @@ function _fireNoteListHandlerUpdate(node){
     handler(node,LocalData.noteList);
   }
 }
-
 
 function _createNoteId(){
   const length=LocalData.noteList.length;
@@ -41,11 +41,22 @@ export const updateNode=(note,callback)=>{
         return item;
       }
     });
+  let updateKey=null;   
+  const OC=ObjectCompare(note,findNote,function(_updateKey){
+    updateKey=_updateKey;
+  });
+  if(OC){
+    return;
+  }else if(!OC&&updateKey=="text"){
+    note.lastEditTime=new Date().getTime();
+  }
+
   if(note.delete){
     LocalData.noteList.splice(findNodeIndex,1);
-  }else if(note.done){
+  }else if(note.doneTime){
     delete findNote.remindTime;
     delete findNote.updateRemindTime;
+    findNote.doneTime=note.doneTime;
   }else{
     for(var i in note){
       if(i!="id"&&(note[i]!=undefined)){

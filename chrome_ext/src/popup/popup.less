@@ -11,7 +11,28 @@
 body{
     margin:0;
     padding:0;
-    font-family: Helvetica Neue,Helvetica,Hiragino Sans GB,Microsoft YaHei,Arial,sans-serif;
+   // font-family: Helvetica Neue,Helvetica,Hiragino Sans GB,Microsoft YaHei,Arial,sans-serif;
+    font-family: Myriad Set Pro,HanHei SC,PingHei,PingFang SC,STHeitiSC-Light,Microsoft YaHei,Tahoma,Helvetica Neue,Arial,sans-serif;
+    .topToolsBar{
+      color:#333;
+      display: flex;
+      height: 32px;
+      line-height: 32px;
+      justify-content:space-between;
+      font-size:12px;
+      .topLeft{
+        display: flex;
+        justify-content: start;
+      }
+      .topRight{
+        display: flex;
+        justify-content: space-between;
+        width: 60px;
+      }
+      .set,.login{
+        cursor: pointer;
+      }
+    }
     .btn{
       height: 100%;
       text-align: center;
@@ -62,6 +83,7 @@ body{
     width: 360px;
     height: 580px;
     padding: 10px;
+    padding-top: 0px;
 
   .icon{
     color:#333;
@@ -90,13 +112,23 @@ body{
   }
   .noteList{
     background: #f5f5f5;
-    height:540px;
+    height:526px;
     overflow: scroll;
     margin-left: -10px;
     margin-right: -10px;
     margin-top:10px;
     padding: 10px;
-    padding-top:5px;
+    padding-top:0px;
+    position:relative;
+    .welcome{
+      position: absolute;
+      top: 40%;
+      width: 100%;
+      text-align: center;
+      font-size: 18px;
+      color: #bbb;
+      left: 0;
+    }
     .sandBox{
       width: 100%;
       font-size: 14px;
@@ -207,7 +239,7 @@ body{
       }
       .summary{
         position:relative;
-        padding:10px;
+        padding:20px;
         width:100%;
         background:#fff;
         padding-top:0;

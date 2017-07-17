@@ -152,12 +152,12 @@ function getWeek(props){
   let week=[];
   for(var i in WeekZHMap){
     let temp=WeekZHMap[i];
-    week.push(<div>{temp}</div>);
+    week.push(<div key={i}>{temp}</div>);
   }
   return <div className="weekHeader">{week}</div>;
 }
 
-class DatePicer extends React.Component{
+class DatePicker extends React.Component{
   constructor(p,c){
     super(p,c);
     let value=p.value||new Date();
@@ -222,4 +222,4 @@ class DatePicer extends React.Component{
   }
 }
 
-export default DatePicer;
+export default DatePicker;

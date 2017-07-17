@@ -218,7 +218,6 @@ class List extends React.Component{
   textChange=(value)=>{
     const data={...this.props.data};
     data.text=value;
-    data.lastEditTime=new Date().getTime();
     this.onChange(data);
   }
 
@@ -238,7 +237,7 @@ class List extends React.Component{
   }
   done=(value)=>{
     const data={...this.props.data};
-    data.done=true;
+    data.doneTime=new Date().getTime();
     this.onChange(data);
   }
   Archive=(value)=>{
@@ -333,9 +332,13 @@ class Lists extends React.Component{
     });
     filterAry=overdueAry.concat(countDownAry).concat(lastEditAry);
 
-    const Map=filterAry.map(function(item,index){
+    let Map=filterAry.map(function(item,index){
       return <List key={item.id} onChange={onChange} data={item} />
     });
+
+    if(Map.length==0){
+      Map=<div className="welcome">欢迎使用!</div>
+    }
 
      
     return (

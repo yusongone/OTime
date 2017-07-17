@@ -1,6 +1,26 @@
 import React,{Children} from "react";
 import PropTypes from 'prop-types';
 
+const globalWatchMap={};
+export const getGlobalWatchMap=()=>{
+  return globalWatchMap;
+}
+function globalWatchFilter(watchList,Component){
+    watchList.forEach(function(item){
+     const watchKey=item.split(" as ")[0];
+     const name=Component.name;
+      if(!globalWatchMap[watchKey]){
+        globalWatchMap[watchKey]={};
+      }
+
+       if(globalWatchMap[watchKey][name]===undefined){
+          globalWatchMap[watchKey][name]=1;
+       }else{
+          globalWatchMap[watchKey][name]++;
+       }
+    });
+}
+
 class AmazonData{
   constructor(obj){
     this._data=obj;
@@ -10,7 +30,7 @@ class AmazonData{
   getData(key){
     return this._data[key];
   }
-  update(key,dataOrFunc){
+  update(keyOrObj,dataOrFunc){
     const keys=Object.keys(this._data);
     const Event={
       update:true,
@@ -18,26 +38,38 @@ class AmazonData{
         this.update=false;
       }
     }
-    if(keys.indexOf(key)>-1){
+
+
+    const tempData={};
+    if(typeof(keyOrObj)=="object"){
+      for(var key in keyOrObj ){
+        if(this.listenList&&this.listenList.indexOf(key)>-1){
+          this._data[key]=keyOrObj[key];
+          tempData[key]=keyOrObj[key];
+        }
+      }
+    }else if(typeof(keyOrObj)=="string"&&keys.indexOf(keyOrObj)>-1){
       if(typeof(dataOrFunc)=="function"){
-        const resultData=dataOrFunc(this._data[key],this._data);  
+        const resultData=dataOrFunc(this._data[key],this._data,Event);  
         if(resultData===undefined){
           console.warn("update 函数需要返回值. ")
         }else{
-          this._data[key]=resultData;
+          this._data[keyOrObj]=resultData;
+          tempData[keyOrObj]=resultData;
         }
       }else{
-        this._data[key]=dataOrFunc;
+        this._data[keyOrObj]=dataOrFunc;
+        tempData[keyOrObj]=dataOrFunc;
       }
-      if(Event.update&&this.listenList&&this.listenList.indexOf(key)>-1){
+    }
+    if(Event.update&&Object.keys(tempData).length>0){
         const promiseAry=this.updateHandler.map((item,index)=>{
           if(typeof(item)==="function"){
-            return item(key,this._data[key])
+            return item(tempData)
           };
           return false;
         });
         return Promise.all(promiseAry);
-      }
     }
     return {then(){}}
   }
@@ -134,19 +166,21 @@ const getWatchComponent=(Component,originWatchList,mapActionToProps)=>
 
     context.data.listen(watchList,this._contextDataHandler);
   }
-  _contextDataHandler=(key,data)=>{
+  _contextDataHandler=(setedState)=>{
     const watchList=this.watchList;
       let p=new Promise((resolve,rejuect)=>{ 
-        if(watchList.indexOf(key)>-1){
-          const state={}
-          state[key]=data;
-          if(this.isDidmount){
-             this.setState(state,()=>{ 
-               resolve({watchList:watchList,status:"updated",value:this.state[key]});
-             });
+        const state={}
+        for(var key in setedState){
+          if(watchList.indexOf(key)>-1){
+            state[key]=setedState[key];
           }
+        }
+        if(Object.keys(state).length>0&&this.isDidmount){
+          this.setState(state,()=>{ 
+            resolve({componetName:Component.name,watchList:watchList,status:"updated",value:state});
+          });
         }else{
-            resolve({watchList:watchList,status:"ignore"});
+            resolve({componetName:Component.name,watchList:watchList,status:"ignore"});
         }
       });
       return p;
@@ -167,5 +201,8 @@ const getWatchComponent=(Component,originWatchList,mapActionToProps)=>
 }
 
 export const watch=(watchList,mapActionToProps)=>{
-  return (Component)=>getWatchComponent(Component,watchList,mapActionToProps);
+  return (Component)=>{
+    globalWatchFilter(watchList,Component);
+    return getWatchComponent(Component,watchList,mapActionToProps);
+  }
 }

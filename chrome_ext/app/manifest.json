@@ -19,6 +19,6 @@
 	},
   "permissions": [
     "activeTab",
-    "https://www.makejs.com/"
+    "https://note.makejs.com/"
   ]
 }
