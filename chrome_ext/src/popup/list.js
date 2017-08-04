@@ -223,6 +223,7 @@ class List extends React.Component{
 
   clockChange=(value)=>{
     const data={...this.props.data};
+    delete data.doneTime;
     data.remindTime=value;
     data.updateRemindTime=new Date().getTime();
     this.onChange(data);
@@ -247,7 +248,6 @@ class List extends React.Component{
   }
   delete=()=>{
     Confirm.appendTo(this.body)((event)=>{
-      console.log(event);
       if(event.action==true){
         const data={...this.props.data};
         data.delete=true;
@@ -303,6 +303,7 @@ class Lists extends React.Component{
           const nowTimestamp=new Date().getTime();
           if(!obj.createTime){
             obj.createTime=nowTimestamp;
+            obj.lastEditTime=nowTimestamp;
           }
           onChange(obj);
         }} data={{}}/>

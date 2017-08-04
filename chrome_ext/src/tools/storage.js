@@ -80,14 +80,6 @@ export const onNoteListChange=(handler)=>{
 }
 
 
-
-
-
-
-
-
-
-
 export const FupdateNode=()=>{
   return fetch(request.path, {
         method: 'POST',
